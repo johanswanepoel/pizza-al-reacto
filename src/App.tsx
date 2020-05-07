@@ -64,6 +64,62 @@ export default class App extends Component<any, State> {
     ],
   };
 
+  pizzaToppingsOptions = {
+    title: "Add your toppings",
+    options: [
+      {
+        id: "pepperoni",
+        textDisplay: "Pepperoni",
+        price: 0.50,
+      },
+      {
+        id: "mushrooms",
+        textDisplay: "Mushrooms",
+        price: 0.50,
+      },
+      {
+        id: "onions",
+        textDisplay: "Onions",
+        price: 0.50,
+      },
+      {
+        id: "sausage",
+        textDisplay: "Sausage",
+        price: 0.50,
+      },
+      {
+        id: "bacon",
+        textDisplay: "Bacon",
+        price: 0.50,
+      },
+      {
+        id: "extra_cheese",
+        textDisplay: "Extra cheese",
+        price: 0.50,
+      },
+      {
+        id: "black_olives",
+        textDisplay: "Black olives",
+        price: 0.50,
+      },
+      {
+        id: "green_peppers",
+        textDisplay: "Green peppers",
+        price: 0.50,
+      },
+      {
+        id: "pineapple",
+        textDisplay: "Pineapple",
+        price: 0.50,
+      },
+      {
+        id: "spinach",
+        textDisplay: "Spinach",
+        price: 0.50,
+      },
+    ],
+  };
+ 
   render() {
     return (
       <>
@@ -72,6 +128,9 @@ export default class App extends Component<any, State> {
         </div>
         <div>
           <AppSelect {...this.pizzaCrustOptions} />
+        </div>
+        <div>
+          <AppSelect {...this.pizzaToppingsOptions} />
         </div>
       </>
     );
