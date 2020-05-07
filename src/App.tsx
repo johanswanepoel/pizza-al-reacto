@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import AppSelect from "./AppSelect";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export interface IPizza {
+  title: string;
 }
 
-export default App;
+export interface IPizzaSize extends IPizza {
+  // options: any[]
+}
+
+export interface IPizzaCrust extends IPizza {
+  // options: any[]
+}
+
+interface Props {}
+
+interface State {
+  price: number;
+}
+
+export default class App extends Component<any, State> {
+  state: State = {
+    price: 0,
+  };
+
+  pizzaSizeOptions = {
+    title: "How hungry are you?",
+    options: [
+      {
+        id: 'small',
+        textDisplay: "small",
+        price: 8,
+        maxTopping: 5 
+      },
+      {
+        id: 'medium',
+        textDisplay: "medium",
+        price: 10,
+        maxTopping: 7
+      },
+      {
+        id: 'large',
+        textDisplay: "large",
+        price: 12,
+        maxTopping: 9
+      },
+    ],
+  };
+
+  render() {
+    return (
+      <div>
+        <AppSelect {...this.pizzaSizeOptions} />
+      </div>
+    );
+  }
+}
