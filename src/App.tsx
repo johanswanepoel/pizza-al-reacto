@@ -28,31 +28,52 @@ export default class App extends Component<any, State> {
     title: "How hungry are you?",
     options: [
       {
-        id: 'small',
+        id: "small",
         textDisplay: "small",
         price: 8,
-        maxTopping: 5 
+        maxTopping: 5,
       },
       {
-        id: 'medium',
+        id: "medium",
         textDisplay: "medium",
         price: 10,
-        maxTopping: 7
+        maxTopping: 7,
       },
       {
-        id: 'large',
+        id: "large",
         textDisplay: "large",
         price: 12,
-        maxTopping: 9
+        maxTopping: 9,
+      },
+    ],
+  };
+
+  pizzaCrustOptions = {
+    title: "Select your crust preference",
+    options: [
+      {
+        id: "thin",
+        textDisplay: "thin",
+        price: 2,
+      },
+      {
+        id: "thick",
+        textDisplay: "thick",
+        price: 4,
       },
     ],
   };
 
   render() {
     return (
-      <div>
-        <AppSelect {...this.pizzaSizeOptions} />
-      </div>
+      <>
+        <div>
+          <AppSelect {...this.pizzaSizeOptions} />
+        </div>
+        <div>
+          <AppSelect {...this.pizzaCrustOptions} />
+        </div>
+      </>
     );
   }
 }
