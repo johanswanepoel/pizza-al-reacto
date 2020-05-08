@@ -15,6 +15,7 @@ import {
   PizzaSizes,
 } from "./models";
 import AppNav from "./AppNav";
+import AppFinalPizza from "./AppFinalPizza";
 interface IState {
   totalPrice: number;
   activeIndex: number;
@@ -25,13 +26,14 @@ interface IState {
 
 export default class App extends Component<any, IState> {
   public state: IState;
-  private sizeOptions = PizzaSizeOptions;
-  private crustOptions = PizzaCrustOptions;
-  private toppingsOptions = PizzaToppingsOptions;
+  // private sizeOptions: IPizzaAddon = PizzaSizeOptions;
+  // private crustOptions: IPizzaAddon = PizzaCrustOptions;
+  // private toppingsOptions: IPizzaAddon = PizzaToppingsOptions;
   private selection: { size: string; crust: string; toppings: string[] };
   private maxReached = false;
   private toppingPrice = 0.5;
   private freeToppings = 3;
+  private options: IPizzaAddon;
 
   constructor(props: any) {
     super(props);
@@ -47,79 +49,29 @@ export default class App extends Component<any, IState> {
       crust: this.state.crust.value,
       toppings: this.state.toppings,
     };
+    this.options = PizzaSizeOptions;
   }
 
-  setActiveScreen() {
-    let activeTab;
-    switch (this.state.activeIndex) {
+  setActiveScreen(n: number) {
+    switch (n) {
       case PizzaScreens.chooseYourSize:
-        activeTab = (
-          <AppSelect
-            key={1}
-            updatePizza={this.updatePizza.bind(this)}
-            activeIndex={this.state.activeIndex}
-            selection={this.selection}
-            {...this.sizeOptions}
-          />
-        );
+        this.options = PizzaSizeOptions;
         break;
       case PizzaScreens.chooseYourCrust:
-        activeTab = (
-          <AppSelect
-            key={2}
-            updatePizza={this.updatePizza.bind(this)}
-            activeIndex={this.state.activeIndex}
-            selection={this.selection}
-            {...this.crustOptions}
-          />
-        );
+        this.options = PizzaCrustOptions;
         break;
       case PizzaScreens.chooseYourToppings:
-        activeTab = (
-          <AppSelect
-            key={3}
-            updatePizza={this.updatePizza.bind(this)}
-            activeIndex={this.state.activeIndex}
-            selection={this.selection}
-            {...this.toppingsOptions}
-          />
-        );
-        break;
-      case PizzaScreens.checkYourCustomPizza:
-        activeTab = (
-          <>
-            <div>Your pizza:</div>
-            <p>
-              {this.state.toppings.length}x toppings: $
-              {this.state.toppings.slice(this.freeToppings).length * this.toppingPrice}
-            </p>
-            <p>
-              {this.state.size.value}: ${this.state.size.price}
-            </p>
-            <p>
-              {this.state.crust.value}: ${this.state.crust.price}
-            </p>
-            <p>Total due: ${this.state.totalPrice}</p>
-          </>
-        );
+        this.options = PizzaToppingsOptions;
         break;
 
       default:
-        activeTab = (
-          <>
-            <div>Create your own pizza</div>
-            <button>START</button>
-          </>
-        );
         break;
     }
-
-    return activeTab;
   }
 
   setActiveScreenIndex(action: string) {
+    console.log(action);
     // updates active index which in turns returns the associated screen
-
     let n = this.state.activeIndex;
     if (action === "next") {
       ++n;
@@ -140,6 +92,7 @@ export default class App extends Component<any, IState> {
     ) {
       return;
     }
+    this.setActiveScreen(n);
     this.setState({
       activeIndex: n,
     });
@@ -227,16 +180,29 @@ export default class App extends Component<any, IState> {
     return (
       <div className="App">
         <header className="App-header">Pizza-al-Reacto</header>
+        {/* nav buttons outlet */}
         <div className="screen-container">
-          {/* main screens outlet */}
-          <div>{this.setActiveScreen()}</div>
-
-          {/* nav buttons outlet */}
-          <AppNav
-            selection={{ ...this.selection }}
-            setActiveScreenIndex={this.setActiveScreenIndex.bind(this)}
-            activeIndex={this.state.activeIndex}
-          />
+       
+          {this.state.activeIndex < PizzaScreens.checkYourCustomPizza ? (
+            <AppSelect
+              key={this.state.activeIndex}
+              updatePizza={this.updatePizza.bind(this)}
+              activeIndex={this.state.activeIndex}
+              selection={this.selection}
+              {...this.options}
+            />
+          ) : (
+            <AppFinalPizza
+              {...this.state}
+              toppingPrice={this.toppingPrice}
+              freeToppings={this.freeToppings}
+            />
+          )}
+        <AppNav
+          selection={{ ...this.selection }}
+          setActiveScreenIndex={this.setActiveScreenIndex.bind(this)}
+          activeIndex={this.state.activeIndex}
+        />
         </div>
       </div>
     );
