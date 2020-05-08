@@ -1,7 +1,7 @@
 import { IPizzaAddon, AddonType } from "./models";
 
 export const PizzaSizeOptions: IPizzaAddon = {
-  title: "How hungry are you?",
+  title: "Select a size for your pizza",
   type: AddonType.size,
   options: [
     {

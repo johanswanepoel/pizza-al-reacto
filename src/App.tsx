@@ -26,14 +26,10 @@ interface IState {
 
 export default class App extends Component<any, IState> {
   public state: IState;
-  // private sizeOptions: IPizzaAddon = PizzaSizeOptions;
-  // private crustOptions: IPizzaAddon = PizzaCrustOptions;
-  // private toppingsOptions: IPizzaAddon = PizzaToppingsOptions;
-  private selection: { size: string; crust: string; toppings: string[] };
   private maxReached = false;
   private toppingPrice = 0.5;
   private freeToppings = 3;
-  private options: IPizzaAddon;
+  private pizzaPropOptions: IPizzaAddon;
 
   constructor(props: any) {
     super(props);
@@ -44,24 +40,20 @@ export default class App extends Component<any, IState> {
       crust: { value: "", price: 0 },
       toppings: [],
     };
-    this.selection = {
-      size: this.state.size.value,
-      crust: this.state.crust.value,
-      toppings: this.state.toppings,
-    };
-    this.options = PizzaSizeOptions;
+    this.pizzaPropOptions = PizzaSizeOptions;
   }
 
   setActiveScreen(n: number) {
+    // set options prop for AppSelect depending on which screen i'm showing
     switch (n) {
       case PizzaScreens.chooseYourSize:
-        this.options = PizzaSizeOptions;
+        this.pizzaPropOptions = PizzaSizeOptions;
         break;
       case PizzaScreens.chooseYourCrust:
-        this.options = PizzaCrustOptions;
+        this.pizzaPropOptions = PizzaCrustOptions;
         break;
       case PizzaScreens.chooseYourToppings:
-        this.options = PizzaToppingsOptions;
+        this.pizzaPropOptions = PizzaToppingsOptions;
         break;
 
       default:
@@ -79,9 +71,8 @@ export default class App extends Component<any, IState> {
       --n;
       // resets toppings if user go back to select different size
       if (n === PizzaScreens.chooseYourSize) {
-        this.selection.toppings = [];
         this.setState({
-          toppings: this.selection.toppings,
+          toppings: [],
         });
       }
     }
@@ -103,6 +94,7 @@ export default class App extends Component<any, IState> {
   }
 
   getTotalPrice() {
+    // To be honest I would have liked to move this to a reduce function on every update - but ran short of time :-)
     let total =
       this.state.size.price +
       this.state.crust.price +
@@ -123,20 +115,12 @@ export default class App extends Component<any, IState> {
         this.setState({
           size: { value: id, price },
         });
-        this.selection = {
-          ...this.selection,
-          size: id,
-        };
 
         break;
       case AddonType.crust:
         this.setState({
           crust: { value: id, price },
         });
-        this.selection = {
-          ...this.selection,
-          crust: id,
-        };
 
         break;
       case AddonType.topping:
@@ -144,13 +128,10 @@ export default class App extends Component<any, IState> {
           this.setState({
             toppings: this.state.toppings.filter((t) => t !== id),
           });
-          this.selection = {
-            ...this.selection,
-            toppings: this.state.toppings.filter((t) => t !== id),
-          };
           return;
         }
 
+        // set max toppings reached var
         if (this.state.size.value === PizzaSizes.small) {
           this.maxReached = this.state.toppings.length >= MaxToppings.small;
         } else if (this.state.size.value === PizzaSizes.medium) {
@@ -159,16 +140,14 @@ export default class App extends Component<any, IState> {
           this.maxReached = this.state.toppings.length >= MaxToppings.large;
         }
 
+        // check if max reached and return
         if (this.maxReached) return;
 
+        // update state if max not reached
         this.setState({
           toppings: [id, ...this.state.toppings],
         });
-        this.selection = {
-          ...this.selection,
-          toppings: [id, ...this.state.toppings],
-        };
-
+       
         break;
 
       default:
@@ -180,29 +159,32 @@ export default class App extends Component<any, IState> {
     return (
       <div className="App">
         <header className="App-header">Pizza-al-Reacto</header>
-        {/* nav buttons outlet */}
         <div className="screen-container">
-       
+          {/* If index is less than last screen - show options else show final pizza */}
           {this.state.activeIndex < PizzaScreens.checkYourCustomPizza ? (
+            // Options outlet
             <AppSelect
-              key={this.state.activeIndex}
+              key={this.pizzaPropOptions.type}
               updatePizza={this.updatePizza.bind(this)}
               activeIndex={this.state.activeIndex}
-              selection={this.selection}
-              {...this.options}
+              {...this.state}
+              {...this.pizzaPropOptions}
             />
           ) : (
+            // Final pizza
             <AppFinalPizza
               {...this.state}
               toppingPrice={this.toppingPrice}
               freeToppings={this.freeToppings}
             />
           )}
-        <AppNav
-          selection={{ ...this.selection }}
-          setActiveScreenIndex={this.setActiveScreenIndex.bind(this)}
-          activeIndex={this.state.activeIndex}
-        />
+
+          {/* nav buttons outlet */}
+          <AppNav
+            {...this.state}
+            setActiveScreenIndex={this.setActiveScreenIndex.bind(this)}
+            activeIndex={this.state.activeIndex}
+          />
         </div>
       </div>
     );

@@ -2,16 +2,16 @@ import * as React from "react";
 import { PizzaScreens } from "./models";
 
 export default function AppNav(props: any) {
-  const { setActiveScreenIndex, activeIndex, selection } = props;
+  const { setActiveScreenIndex, activeIndex, size, crust } = props;
 
   const canNext = () => {
     let value = false;
     switch (activeIndex) {
         case PizzaScreens.chooseYourSize:
-            value = !!selection.size
+            value = !!size.value
             break;
         case PizzaScreens.chooseYourCrust:
-            value = !!selection.crust
+            value = !!crust.value
             break;
         case PizzaScreens.chooseYourToppings:
             value = true
