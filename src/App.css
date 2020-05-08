@@ -24,7 +24,7 @@
 }
 
 .screen-container {
-  max-width: 1400px;
+  max-width: 1080px;
   margin: auto;
 }
 
@@ -48,14 +48,14 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  opacity: 1;
+  opacity: .7;
 }
 
 .option:hover {
-  opacity: .6;
+  opacity: 1;
 }
 .option.active {
-  opacity: .6;
+  opacity: 1;
   border: 2px solid gray;
 }
 
@@ -95,8 +95,9 @@
 }
 
 .option.topping{
-  min-width: 200px;
+  max-width: 160px;
   border-radius: 10px;
+  max-height: 210px;
 
 }
 
@@ -117,3 +118,29 @@ tr:nth-child(even) {
   background-color: #f8f8f8;
 }
 
+.nav-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+button.nav {
+  background: gray;
+  border: none;
+  color: white;
+  width: 75px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  border-radius: 4px;
+  box-shadow: 0 0 2px lightgray;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+button.nav:disabled {
+  background-color: lightgray;
+}

@@ -36,7 +36,6 @@ export default function AppSelect(props: IPizzaAddon & any) {
                     <img src={type === AddonType.topping ? require(`./img/${id}.png`) : null} alt={''} />
                     <p>{textDisplay}: ${price}</p>
                   </div>
-                  {/* {maxTopping ? <p>Max toppings: {maxTopping}</p> : null} */}
                 </>
               );
             })}

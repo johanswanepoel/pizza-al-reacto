@@ -25,12 +25,12 @@ export default function AppNav(props: any) {
   }
 
   return (
-    <div>
+    <div className="nav-group">
       {activeIndex > PizzaScreens.chooseYourSize ? (
-        <button onClick={() => setActiveScreenIndex("prev")}>Back</button>
+        <button className="nav" onClick={() => setActiveScreenIndex("prev")}>Back</button>
       ) : null}
       {activeIndex < PizzaScreens.checkYourCustomPizza ? (
-        <button onClick={() => setActiveScreenIndex("next")} disabled={!canNext()}>Next</button>
+        <button className="nav" onClick={() => setActiveScreenIndex("next")} disabled={!canNext()}>Next</button>
       ) : null}
     </div>
   );
