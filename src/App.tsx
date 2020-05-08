@@ -1,138 +1,202 @@
 import React, { Component } from "react";
+import "./App.css";
 import AppSelect from "./AppSelect";
-
-export interface IPizza {
-  title: string;
+import {
+  PizzaSizeOptions,
+  PizzaCrustOptions,
+  PizzaToppingsOptions,
+} from "./fakeBackend";
+import { PizzaScreens, IPizzaAddon, IPizzaOptions, AddonType } from "./models";
+interface IState {
+  totalPrice: number;
+  activeIndex: number;
+  size: { size: string; price: number };
+  crust: { size: string; price: number };
+  toppings: string[];
 }
 
-export interface IPizzaSize extends IPizza {
-  // options: any[]
-}
+export default class App extends Component<any, IState> {
+  public state: IState;
+  private sizeOptions = PizzaSizeOptions;
+  private crustOptions = PizzaCrustOptions;
+  private toppingsOptions = PizzaToppingsOptions;
+  selection: { size: string; crust: string; toppings: string[] };
 
-export interface IPizzaCrust extends IPizza {
-  // options: any[]
-}
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      totalPrice: 0,
+      activeIndex: 0,
+      size: { size: "", price: 0 },
+      crust: { size: "", price: 0 },
+      toppings: [],
+    };
+    this.selection = {
+      size: this.state.size.size,
+      crust: this.state.crust.size,
+      toppings: this.state.toppings,
+    };
+  }
 
-interface Props {}
+  setActiveTab() {
+    let activeTab;
+    switch (this.state.activeIndex) {
+      case PizzaScreens.chooseYourSize:
+        activeTab = (
+          <AppSelect
+            updatePizza={this.updatePizza.bind(this)}
+            activeIndex={this.state.activeIndex}
+            selection={this.selection}
+            {...this.sizeOptions}
+          />
+        );
+        break;
+      case PizzaScreens.chooseYourCrust:
+        activeTab = (
+          <AppSelect
+            updatePizza={this.updatePizza.bind(this)}
+            activeIndex={this.state.activeIndex}
+            selection={this.selection}
+            {...this.crustOptions}
+          />
+        );
+        break;
+      case PizzaScreens.chooseYourToppings:
+        activeTab = (
+          <AppSelect
+            updatePizza={this.updatePizza.bind(this)}
+            activeIndex={this.state.activeIndex}
+            selection={this.selection}
+            {...this.toppingsOptions}
+          />
+        );
+        break;
+      case PizzaScreens.checkYourCustomPizza:
+        activeTab = (
+          <>
+            <div>Your pizza:</div>
+            <p>{this.state.toppings.length}x toppings: ${this.state.toppings.slice(3).length * 0.5}</p>
+            <p>
+              {this.state.size.size}: ${this.state.size.price}
+            </p>
+            <p>
+              {this.state.crust.size}: ${this.state.crust.price}
+            </p>
+            <p>Total due: ${this.state.totalPrice}</p>
+          </>
+        );
+        break;
 
-interface State {
-  price: number;
-}
+      default:
+        activeTab = (
+          <>
+            <div>Create your own pizza</div>
+            <button>START</button>
+          </>
+        );
+        break;
+    }
 
-export default class App extends Component<any, State> {
-  state: State = {
-    price: 0,
-  };
+    return activeTab;
+  }
 
-  pizzaSizeOptions = {
-    title: "How hungry are you?",
-    options: [
-      {
-        id: "small",
-        textDisplay: "small",
-        price: 8,
-        maxTopping: 5,
-      },
-      {
-        id: "medium",
-        textDisplay: "medium",
-        price: 10,
-        maxTopping: 7,
-      },
-      {
-        id: "large",
-        textDisplay: "large",
-        price: 12,
-        maxTopping: 9,
-      },
-    ],
-  };
+  setActiveIndex(n: number) {
+    if (n >= 4 || n < 0) {
+      return;
+    }
+    this.setState({
+      activeIndex: n,
+    });
+    console.log(n);
+    if (n === 3) {
+      this.getTotalPrice();
+    }
+  }
 
-  pizzaCrustOptions = {
-    title: "Select your crust preference",
-    options: [
-      {
-        id: "thin",
-        textDisplay: "thin",
-        price: 2,
-      },
-      {
-        id: "thick",
-        textDisplay: "thick",
-        price: 4,
-      },
-    ],
-  };
+  getTotalPrice() {
+    let total =
+      this.state.size.price +
+      this.state.crust.price +
+      this.state.toppings.slice(3).length * 0.5;
+    this.setState({
+      totalPrice: total,
+    });
+  }
 
-  pizzaToppingsOptions = {
-    title: "Add your toppings",
-    options: [
-      {
-        id: "pepperoni",
-        textDisplay: "Pepperoni",
-        price: 0.50,
-      },
-      {
-        id: "mushrooms",
-        textDisplay: "Mushrooms",
-        price: 0.50,
-      },
-      {
-        id: "onions",
-        textDisplay: "Onions",
-        price: 0.50,
-      },
-      {
-        id: "sausage",
-        textDisplay: "Sausage",
-        price: 0.50,
-      },
-      {
-        id: "bacon",
-        textDisplay: "Bacon",
-        price: 0.50,
-      },
-      {
-        id: "extra_cheese",
-        textDisplay: "Extra cheese",
-        price: 0.50,
-      },
-      {
-        id: "black_olives",
-        textDisplay: "Black olives",
-        price: 0.50,
-      },
-      {
-        id: "green_peppers",
-        textDisplay: "Green peppers",
-        price: 0.50,
-      },
-      {
-        id: "pineapple",
-        textDisplay: "Pineapple",
-        price: 0.50,
-      },
-      {
-        id: "spinach",
-        textDisplay: "Spinach",
-        price: 0.50,
-      },
-    ],
-  };
- 
+  updatePizza(opts: IPizzaOptions & { type: string }) {
+    const { id, price, type } = opts;
+    switch (type) {
+      case AddonType.size:
+        this.setState({
+          size: { size: id, price },
+        });
+        this.selection = {
+          ...this.selection,
+          size: id,
+        };
+
+        break;
+      case AddonType.crust:
+        this.setState({
+          crust: { size: id, price },
+        });
+        this.selection = {
+          ...this.selection,
+          crust: id,
+        };
+
+        break;
+      case AddonType.topping:
+        if (this.state.toppings.includes(id)) {
+          this.setState({
+            toppings: this.state.toppings.filter((t) => t !== id),
+          });
+          this.selection = {
+            ...this.selection,
+            toppings: this.state.toppings.filter((t) => t !== id),
+          };
+
+          return;
+        }
+
+        this.setState({
+          toppings: [id, ...this.state.toppings],
+        });
+        this.selection = {
+          ...this.selection,
+          toppings: [id, ...this.state.toppings],
+        };
+
+        break;
+
+      default:
+        break;
+    }
+   
+  }
+
   render() {
     return (
-      <>
-        <div>
-          <AppSelect {...this.pizzaSizeOptions} />
+      <div className="App">
+        <header className="App-header">Pizza-al-Reacto</header>
+        <div className="screen-container">
+          {/* <p>{this.state.activeIndex}</p> */}
+          {/* {this.selection.map((t) => (
+            <p key={t}>{t}</p>
+          ))} */}
+          <div>{this.setActiveTab()}</div>
+          <button
+            onClick={() => this.setActiveIndex(this.state.activeIndex - 1)}
+          >
+            Back
+          </button>
+          <button
+            onClick={() => this.setActiveIndex(this.state.activeIndex + 1)}
+          >
+            Next
+          </button>
         </div>
-        <div>
-          <AppSelect {...this.pizzaCrustOptions} />
-        </div>
-        <div>
-          <AppSelect {...this.pizzaToppingsOptions} />
-        </div>
-      </>
+      </div>
     );
   }
 }
