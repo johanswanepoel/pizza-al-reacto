@@ -13,19 +13,17 @@
   font-size: calc(10px + 2vmin);
   color: white;
   padding-left: 40px;
-
 }
-
 
 .options-container {
   display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
 }
 
 .screen-container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: auto;
 }
 
@@ -35,19 +33,66 @@
 }
 
 .option {
-  border: 1px solid transparent;
-  transition: border 100ms ease-in-out;
+  border: 2px solid transparent;
+  transition: all 100ms ease-in-out;
   margin: 10px;
   width: auto;
-  width: 100px;
   overflow: hidden;
   background: transparent;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 4px 0 lightgray;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  opacity: 1;
 }
 
 .option:hover {
-  border: 1px solid black;
+  opacity: .6;
 }
 .option.active {
-  border: 1px solid black;
+  opacity: .6;
+  border: 2px solid black;
 }
+
+.option.size,.option.size.active  {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.option.option.size:nth-child(2) {
+  width: 140px;
+  height: 140px;
+}
+
+.option.option.size:nth-child(3) {
+  width: 160px;
+  height: 160px;
+}
+
+.option.crust, .option.crust.active  {
+  width: 160px;
+  height: 10px;
+  border-radius: 10px;
+}
+.option.crust:last-child, .option.crust.active:last-child  {
+  width: 160px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.option.topping{
+  min-width: 200px;
+  border-radius: 10px;
+
+}
+
+button.nav {
+
+}
+
 

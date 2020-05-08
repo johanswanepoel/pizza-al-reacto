@@ -6,12 +6,20 @@ import {
   PizzaCrustOptions,
   PizzaToppingsOptions,
 } from "./fakeBackend";
-import { PizzaScreens, IPizzaAddon, IPizzaOptions, AddonType } from "./models";
+import {
+  PizzaScreens,
+  IPizzaAddon,
+  IPizzaOptions,
+  AddonType,
+  MaxToppings,
+  PizzaSizes,
+} from "./models";
+import AppNav from "./AppNav";
 interface IState {
   totalPrice: number;
   activeIndex: number;
-  size: { size: string; price: number };
-  crust: { size: string; price: number };
+  size: { value: string; price: number };
+  crust: { value: string; price: number };
   toppings: string[];
 }
 
@@ -20,30 +28,34 @@ export default class App extends Component<any, IState> {
   private sizeOptions = PizzaSizeOptions;
   private crustOptions = PizzaCrustOptions;
   private toppingsOptions = PizzaToppingsOptions;
-  selection: { size: string; crust: string; toppings: string[] };
+  private selection: { size: string; crust: string; toppings: string[] };
+  private maxReached = false;
+  private toppingPrice = 0.5;
+  private freeToppings = 3;
 
   constructor(props: any) {
     super(props);
     this.state = {
       totalPrice: 0,
       activeIndex: 0,
-      size: { size: "", price: 0 },
-      crust: { size: "", price: 0 },
+      size: { value: "", price: 0 },
+      crust: { value: "", price: 0 },
       toppings: [],
     };
     this.selection = {
-      size: this.state.size.size,
-      crust: this.state.crust.size,
+      size: this.state.size.value,
+      crust: this.state.crust.value,
       toppings: this.state.toppings,
     };
   }
 
-  setActiveTab() {
+  setActiveScreen() {
     let activeTab;
     switch (this.state.activeIndex) {
       case PizzaScreens.chooseYourSize:
         activeTab = (
           <AppSelect
+            key={1}
             updatePizza={this.updatePizza.bind(this)}
             activeIndex={this.state.activeIndex}
             selection={this.selection}
@@ -54,6 +66,7 @@ export default class App extends Component<any, IState> {
       case PizzaScreens.chooseYourCrust:
         activeTab = (
           <AppSelect
+            key={2}
             updatePizza={this.updatePizza.bind(this)}
             activeIndex={this.state.activeIndex}
             selection={this.selection}
@@ -64,6 +77,7 @@ export default class App extends Component<any, IState> {
       case PizzaScreens.chooseYourToppings:
         activeTab = (
           <AppSelect
+            key={3}
             updatePizza={this.updatePizza.bind(this)}
             activeIndex={this.state.activeIndex}
             selection={this.selection}
@@ -75,12 +89,15 @@ export default class App extends Component<any, IState> {
         activeTab = (
           <>
             <div>Your pizza:</div>
-            <p>{this.state.toppings.length}x toppings: ${this.state.toppings.slice(3).length * 0.5}</p>
             <p>
-              {this.state.size.size}: ${this.state.size.price}
+              {this.state.toppings.length}x toppings: $
+              {this.state.toppings.slice(this.freeToppings).length * this.toppingPrice}
             </p>
             <p>
-              {this.state.crust.size}: ${this.state.crust.price}
+              {this.state.size.value}: ${this.state.size.price}
+            </p>
+            <p>
+              {this.state.crust.value}: ${this.state.crust.price}
             </p>
             <p>Total due: ${this.state.totalPrice}</p>
           </>
@@ -100,15 +117,34 @@ export default class App extends Component<any, IState> {
     return activeTab;
   }
 
-  setActiveIndex(n: number) {
-    if (n >= 4 || n < 0) {
+  setActiveScreenIndex(action: string) {
+    // updates active index which in turns returns the associated screen
+
+    let n = this.state.activeIndex;
+    if (action === "next") {
+      ++n;
+    } else {
+      --n;
+      // resets toppings if user go back to select different size
+      if (n === PizzaScreens.chooseYourSize) {
+        this.selection.toppings = [];
+        this.setState({
+          toppings: this.selection.toppings,
+        });
+      }
+    }
+
+    if (
+      n > PizzaScreens.checkYourCustomPizza ||
+      n < PizzaScreens.chooseYourSize
+    ) {
       return;
     }
     this.setState({
       activeIndex: n,
     });
-    console.log(n);
-    if (n === 3) {
+    if (n === PizzaScreens.checkYourCustomPizza) {
+      // if user is on last screen - get total price
       this.getTotalPrice();
     }
   }
@@ -117,7 +153,7 @@ export default class App extends Component<any, IState> {
     let total =
       this.state.size.price +
       this.state.crust.price +
-      this.state.toppings.slice(3).length * 0.5;
+      this.state.toppings.slice(this.freeToppings).length * this.toppingPrice;
     this.setState({
       totalPrice: total,
     });
@@ -125,10 +161,14 @@ export default class App extends Component<any, IState> {
 
   updatePizza(opts: IPizzaOptions & { type: string }) {
     const { id, price, type } = opts;
+
+    //  checks update type eg. size, crust and toppings and updates state
+    //  updates each part of state using switch statement
+
     switch (type) {
       case AddonType.size:
         this.setState({
-          size: { size: id, price },
+          size: { value: id, price },
         });
         this.selection = {
           ...this.selection,
@@ -138,7 +178,7 @@ export default class App extends Component<any, IState> {
         break;
       case AddonType.crust:
         this.setState({
-          crust: { size: id, price },
+          crust: { value: id, price },
         });
         this.selection = {
           ...this.selection,
@@ -155,9 +195,18 @@ export default class App extends Component<any, IState> {
             ...this.selection,
             toppings: this.state.toppings.filter((t) => t !== id),
           };
-
           return;
         }
+
+        if (this.state.size.value === PizzaSizes.small) {
+          this.maxReached = this.state.toppings.length >= MaxToppings.small;
+        } else if (this.state.size.value === PizzaSizes.medium) {
+          this.maxReached = this.state.toppings.length >= MaxToppings.medium;
+        } else {
+          this.maxReached = this.state.toppings.length >= MaxToppings.large;
+        }
+
+        if (this.maxReached) return;
 
         this.setState({
           toppings: [id, ...this.state.toppings],
@@ -172,7 +221,6 @@ export default class App extends Component<any, IState> {
       default:
         break;
     }
-   
   }
 
   render() {
@@ -180,21 +228,15 @@ export default class App extends Component<any, IState> {
       <div className="App">
         <header className="App-header">Pizza-al-Reacto</header>
         <div className="screen-container">
-          {/* <p>{this.state.activeIndex}</p> */}
-          {/* {this.selection.map((t) => (
-            <p key={t}>{t}</p>
-          ))} */}
-          <div>{this.setActiveTab()}</div>
-          <button
-            onClick={() => this.setActiveIndex(this.state.activeIndex - 1)}
-          >
-            Back
-          </button>
-          <button
-            onClick={() => this.setActiveIndex(this.state.activeIndex + 1)}
-          >
-            Next
-          </button>
+          {/* main screens outlet */}
+          <div>{this.setActiveScreen()}</div>
+
+          {/* nav buttons outlet */}
+          <AppNav
+            selection={{ ...this.selection }}
+            setActiveScreenIndex={this.setActiveScreenIndex.bind(this)}
+            activeIndex={this.state.activeIndex}
+          />
         </div>
       </div>
     );

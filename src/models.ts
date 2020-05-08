@@ -5,9 +5,9 @@ export interface IPizzaAddon {
 }
 
 export enum AddonType {
-  topping = 'topping',
-  size = 'size',
-  crust = 'crust'
+  topping = "topping",
+  size = "size",
+  crust = "crust",
 }
 
 export interface IPizzaOptions {
@@ -18,9 +18,21 @@ export interface IPizzaOptions {
   imgUrl?: string;
 }
 
+export enum PizzaSizes {
+  small = "small",
+  medium = "medium",
+  large = "large",
+}
+
 export enum PizzaScreens {
   chooseYourSize = 0,
   chooseYourCrust,
   chooseYourToppings,
   checkYourCustomPizza,
+}
+
+export enum MaxToppings {
+  small = 5,
+  medium = 7,
+  large = 9,
 }
