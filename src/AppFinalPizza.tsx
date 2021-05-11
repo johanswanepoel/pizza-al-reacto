@@ -1,14 +1,7 @@
-import React from "react";
+import React from 'react';
 
 export default function AppFinalPizza(props: any) {
-  const {
-    toppings,
-    size,
-    crust,
-    totalPrice,
-    toppingPrice,
-    freeToppings,
-  } = props;
+  const { toppings, size, crust, totalPrice, toppingPrice, freeToppings } = props;
   return (
     <div>
       <h1>Your custom pizza:</h1>
@@ -27,8 +20,15 @@ export default function AppFinalPizza(props: any) {
           </tr>
           <tr>
             <th>Toppings</th>
-            <td>{toppings.length}x toppings</td>
-            <td>${toppings.slice(freeToppings).length * toppingPrice}</td>
+            <td>
+              {toppings.length}x toppings @ ${toppingPrice} each
+            </td>
+            <td>${toppings.length * toppingPrice}</td>
+          </tr>
+          <tr>
+            <th>Promo</th>
+            <td>{freeToppings}x toppings FREE</td>
+            <td>-${freeToppings * toppingPrice}</td>
           </tr>
           <tr>
             <th>Total due:</th>

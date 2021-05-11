@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IPizzaAddon, AddonType, PizzaScreens, IPizzaOptions } from './models';
 
 export default function AppSelect(props: IPizzaAddon & any) {
-  const { title, type, options, updatePizza, activeIndex, size, crust, toppings } = props;
+  const { type, options, updatePizza, activeIndex, size, crust, toppings } = props;
 
   const isActive = (id: string) => {
     let isactive = false;
@@ -25,7 +25,6 @@ export default function AppSelect(props: IPizzaAddon & any) {
 
   return (
     <div>
-      <h1>{title}</h1>
       <div className='options-container'>
         {options.map((opt: IPizzaOptions) => {
           const { price, textDisplay, id, maxTopping } = opt;

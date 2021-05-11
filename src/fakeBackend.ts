@@ -1,7 +1,6 @@
 import { AddonType, IPizzaAddon } from './models';
 
 export const PizzaSizeOptions: IPizzaAddon = {
-  title: 'Select a size for your pizza',
   type: AddonType.size,
   options: [
     {
@@ -26,7 +25,6 @@ export const PizzaSizeOptions: IPizzaAddon = {
 };
 
 export const PizzaCrustOptions: IPizzaAddon = {
-  title: 'Select your crust preference',
   type: AddonType.crust,
   options: [
     {
@@ -43,13 +41,12 @@ export const PizzaCrustOptions: IPizzaAddon = {
 };
 
 export const PizzaToppingsOptions: IPizzaAddon = {
-  title: 'Add your toppings',
   type: AddonType.topping,
   options: [
     {
       id: 'pepperoni',
       textDisplay: 'Pepperoni',
-      price: 0.7
+      price: 0.5
     },
     {
       id: 'mushrooms',
@@ -64,12 +61,12 @@ export const PizzaToppingsOptions: IPizzaAddon = {
     {
       id: 'sausage',
       textDisplay: 'Sausage',
-      price: 0.7
+      price: 0.5
     },
     {
       id: 'bacon',
       textDisplay: 'Bacon',
-      price: 0.7
+      price: 0.5
     },
     {
       id: 'extra_cheese',

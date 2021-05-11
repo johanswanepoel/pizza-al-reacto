@@ -10,6 +10,11 @@
   padding-left: 40px;
 }
 
+.heading {
+  text-align: center;
+  margin: 20px;
+}
+
 .options-container {
   display: flex;
   justify-content: center;

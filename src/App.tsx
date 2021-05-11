@@ -11,6 +11,8 @@ interface IState {
   size: { value: string; price: number };
   crust: { value: string; price: number };
   toppings: string[];
+  title: string;
+  maxTopping: number;
 }
 
 export default class App extends Component<any, IState> {
@@ -27,7 +29,9 @@ export default class App extends Component<any, IState> {
       activeIndex: 0,
       size: { value: '', price: 0 },
       crust: { value: '', price: 0 },
-      toppings: []
+      toppings: [],
+      title: 'Select your pizza size',
+      maxTopping: 0
     };
     this.pizzaPropOptions = PizzaSizeOptions;
   }
@@ -37,12 +41,15 @@ export default class App extends Component<any, IState> {
     switch (n) {
       case PizzaScreens.chooseYourSize:
         this.pizzaPropOptions = PizzaSizeOptions;
+        this.setState({ title: 'Select your pizza size' });
         break;
       case PizzaScreens.chooseYourCrust:
         this.pizzaPropOptions = PizzaCrustOptions;
+        this.setState({ title: 'Select your crust preference' });
         break;
       case PizzaScreens.chooseYourToppings:
         this.pizzaPropOptions = PizzaToppingsOptions;
+        this.setState({ title: `Select your ${this.state.maxTopping} toppings` });
         break;
 
       default:
@@ -80,17 +87,14 @@ export default class App extends Component<any, IState> {
   }
 
   getTotalPrice() {
-    let total =
-      this.state.size.price +
-      this.state.crust.price +
-      this.state.toppings.slice(this.freeToppings).length * this.toppingPrice;
+    let total = this.state.size.price + this.state.crust.price + this.state.toppings.length * this.toppingPrice;
     this.setState({
-      totalPrice: total
+      totalPrice: total - this.freeToppings * this.toppingPrice
     });
   }
 
   updatePizza(opts: IPizzaOptions & { type: string }) {
-    const { id, price, type } = opts;
+    const { id, price, type, maxTopping } = opts;
 
     //  checks update type eg. size, crust and toppings and updates state
     //  updates each part of state using switch statement
@@ -98,7 +102,8 @@ export default class App extends Component<any, IState> {
     switch (type) {
       case AddonType.size:
         this.setState({
-          size: { value: id, price }
+          size: { value: id, price },
+          maxTopping: maxTopping ?? 0
         });
 
         break;
@@ -144,6 +149,7 @@ export default class App extends Component<any, IState> {
     return (
       <div className='App'>
         <header className='App-header'>Pizza-al-Reacto</header>
+        <h1 className='heading'>{this.state.title}</h1>
         <div style={{ padding: '30px' }}>
           <p>
             {this.state.size.value && <span>One {this.state.size.value} pizza</span>}
@@ -162,7 +168,6 @@ export default class App extends Component<any, IState> {
         </div>
         <div className='screen-container'>
           {/* If index is less than last screen - show options else show final pizza */}
-          {this.state.activeIndex === PizzaScreens.chooseYourToppings && this.maxReached && <p>Max Reached</p>}
           {this.state.activeIndex < PizzaScreens.checkYourCustomPizza ? (
             // Options outlet
             <AppSelect
