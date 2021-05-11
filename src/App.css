@@ -15,7 +15,7 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  min-height: 50vh;
+  min-height: 30vh;
 }
 
 .screen-container {
@@ -30,6 +30,7 @@
 }
 
 .option {
+  user-select: none;
   border: 1px solid transparent;
   transition: all 100ms ease-in-out;
   margin: 10px;
@@ -43,7 +44,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-transform: uppercase;
   opacity: 0.7;
 }
 
@@ -65,12 +65,12 @@
   border-radius: 50%;
 }
 
-.option.option.size:nth-child(2) {
+.option.size:nth-of-type(2) {
   width: 140px;
   height: 140px;
 }
 
-.option.option.size:nth-child(3) {
+.option.size:nth-of-type(3) {
   width: 160px;
   height: 160px;
 }
@@ -139,4 +139,8 @@ button.nav {
 
 button.nav:disabled {
   background-color: gray;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }

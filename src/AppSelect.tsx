@@ -1,5 +1,5 @@
-import * as React from "react";
-import { IPizzaAddon, AddonType, PizzaScreens, IPizzaOptions } from "./models";
+import * as React from 'react';
+import { IPizzaAddon, AddonType, PizzaScreens, IPizzaOptions } from './models';
 
 export default function AppSelect(props: IPizzaAddon & any) {
   const { title, type, options, updatePizza, activeIndex, size, crust, toppings } = props;
@@ -20,35 +20,23 @@ export default function AppSelect(props: IPizzaAddon & any) {
       default:
         break;
     }
-    return isactive ? "active" : "";
+    return isactive ? 'active' : '';
   };
 
   return (
     <div>
       <h1>{title}</h1>
-      <div className="options-container">
+      <div className='options-container'>
         {options.map((opt: IPizzaOptions) => {
           const { price, textDisplay, id, maxTopping } = opt;
           return (
-            <>
-              <div
-                key={id}
-                onClick={() => updatePizza({ type, ...opt })}
-                className={`option ${isActive(id)} ${type}`}
-              >
-                <img
-                  src={
-                    type === AddonType.topping
-                      ? require(`./img/${id}.png`)
-                      : null
-                  }
-                  alt={""}
-                />
-                <p>
-                  {textDisplay}: ${price}
-                </p>
-              </div>
-            </>
+            <div key={id} onClick={() => updatePizza({ type, ...opt })} className={`option ${isActive(id)} ${type}`}>
+              <img src={type === AddonType.topping ? require(`./img/${id}.png`) : null} alt={''} />
+              <p className='uppercase'>
+                {textDisplay}: ${price}
+              </p>
+              {maxTopping && <small className='toppings'>(Toppings: {maxTopping})</small>}
+            </div>
           );
         })}
       </div>
